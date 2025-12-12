@@ -103,11 +103,6 @@
 // ============================
 let soundElements = {}; // Ahora es una variable vacía
 
-
-// Detección de modo táctil
-const isTouch = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
-// ... (resto del script.js)
-
   // Detección de modo táctil
   const isTouch = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
   const toggleRoleBtn = document.getElementById("toggleRoleBtn");
