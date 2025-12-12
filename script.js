@@ -101,11 +101,8 @@
 // ============================
 // VARIABLES DE SONIDO
 // ============================
-const soundElements = {
-    click: new Audio('click.mp3'),
-    success: new Audio('success.mp3'),
-    error: new Audio('error.mp3')
-};
+let soundElements = {}; // Ahora es una variable vacía
+
 
 // Detección de modo táctil
 const isTouch = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
@@ -160,7 +157,23 @@ const isTouch = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
   // ============================
   // INICIALIZACIÓN
   // ============================
-  function initGame() {
+
+function setupAudioElements() {
+  soundElements = {
+      click: new Audio('click.mp3'),
+      success: new Audio('success.mp3'),
+      error: new Audio('error.mp3')
+  };
+  // Puedes precargar el audio aquí si quieres, aunque new Audio() lo hace a menudo.
+  // soundElements.click.load();
+}
+
+
+function initGame() {
+  // LLAMADA NUEVA AQUÍ
+  setupAudioElements(); 
+  // FIN LLAMADA NUEVA
+
     loadStats();
     loadPreferences();
     initializeDecks();
