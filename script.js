@@ -98,6 +98,19 @@
 
   const EMOJI_AVATARS = ["😀", "😎", "🤓", "😇", "🤠", "🥳", "🤖", "👽", "🦊", "🐯"];
 
+// ============================
+// VARIABLES DE SONIDO
+// ============================
+const soundElements = {
+    click: new Audio('click.mp3'),
+    success: new Audio('success.mp3'),
+    error: new Audio('error.mp3')
+};
+
+// Detección de modo táctil
+const isTouch = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+// ... (resto del script.js)
+
   // Detección de modo táctil
   const isTouch = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
   const toggleRoleBtn = document.getElementById("toggleRoleBtn");
@@ -227,37 +240,30 @@
     return allExamples.slice(0, 3).join(', ');
   }
 
-  function playSound(type) {
-    if (!gameState.soundEnabled) return;
+function playSound(type) {
+  if (!gameState.soundEnabled) return;
+
+  const audioEl = soundElements[type];
+  
+  if (audioEl) {
+    // 1. Detener si ya está sonando (para que los clicks sean instantáneos)
+    audioEl.pause(); 
+    // 2. Volver al inicio
+    audioEl.currentTime = 0; 
     
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    switch(type) {
-      case 'click':
-        oscillator.frequency.value = 800;
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-        break;
-      case 'success':
-        oscillator.frequency.value = 600;
-        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-        break;
-      case 'error':
-        oscillator.frequency.value = 200;
-        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-        break;
+    // Opcional: Ajustar volumen si es necesario
+    if (type === 'click') {
+        audioEl.volume = 0.6; // Clicks un poco más bajos
+    } else {
+        audioEl.volume = 1.0;
     }
     
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.3);
+    // 3. Reproducir, capturando cualquier error de reproducción automática
+    audioEl.play().catch(e => {
+        console.warn("No se pudo reproducir el sonido (posiblemente por políticas de AutoPlay del navegador):", e);
+    });
   }
+}
 
   function createConfetti() {
     const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#10b981'];
