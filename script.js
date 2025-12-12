@@ -103,14 +103,6 @@
 // ============================
 let soundElements = {}; // Ahora es una variable vacía
 
-  // Detección de modo táctil
-  const isTouch = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
-  const toggleRoleBtn = document.getElementById("toggleRoleBtn");
-  if (toggleRoleBtn) {
-    // Ocultar el botón si es táctil (se usa el gesto de deslizar)
-    toggleRoleBtn.style.display = isTouch ? "none" : "block";
-  }
-
   // Estado del juego
   const gameState = {
     mode: 'classic',
@@ -171,6 +163,12 @@ function initGame() {
 
     loadStats();
     loadPreferences();
+    const toggleRoleBtn = document.getElementById("toggleRoleBtn");
+  if (toggleRoleBtn) {
+    // Ocultar el botón si es táctil (se usa el gesto de deslizar)
+    toggleRoleBtn.style.display = isTouch ? "none" : "block";
+  }
+
     initializeDecks();
     refreshPlayerNameInputs();
     showScreen("screen-start");
