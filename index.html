@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>El Impostorcillo - Suma Cum Laude</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+  <div class="app">
+    <div class="card">
+
+  <div class="top-controls">
+    <button class="icon-btn" onclick="toggleDarkMode()" title="Modo oscuro">🌙</button>
+    <button class="icon-btn" onclick="toggleSound()" title="Sonido" id="soundBtn">🔊</button>
+    <button class="icon-btn" onclick="goToSetup()" title="Menú">≡</button>
+  </div>
+
+  <div id="screen-start" class="screen">
+    <div class="hero-illustration">
+      <div class="emoji">🕵️</div>
+    </div>
+
+    <h1>El Impostorcillo</h1>
+    <p class="center">
+      El juego social de deducción y engaño.<br>
+      ¡Intenta no parecer sospechoso!
+    </p>
+
+    <button onclick="goToSetup()">Nueva partida</button>
+    <button class="secondary" onclick="showTutorial()">Tutorial</button>
+    <button class="secondary" onclick="showStats()">Estadísticas</button>
+    <p class="small">Versión 2.0.1 - Suma Cum Laude Edition (Mejorada)</p>
+  </div>
+
+  <div id="screen-setup" class="screen hidden">
+    <div class="title-row">
+      <div class="title-icon">⚙️</div>
+      <h2>Configuración</h2>
+    </div>
+
+    <label>Modo de juego</label>
+    <div class="game-mode-selector">
+      <div class="mode-card selected" onclick="selectMode('classic')" data-mode="classic">
+        <div class="emoji">🎭</div>
+        <div class="title">Clásico</div>
+      </div>
+      <div class="mode-card" onclick="selectMode('mrwhite')" data-mode="mrwhite">
+        <div class="emoji">👥</div>
+        <div class="title">Mr. White</div>
+      </div>
+      <div class="mode-card" onclick="selectMode('expert')" data-mode="expert">
+        <div class="emoji">🎓</div>
+        <div class="title">Experto</div>
+      </div>
+      <div class="mode-card" onclick="selectMode('rapid')" data-mode="rapid">
+        <div class="emoji">⚡</div>
+        <div class="title">Rápido</div>
+      </div>
+    </div>
+
+    <label for="selectPlayers">Número de jugadores</label>
+    <select id="selectPlayers">
+      <option value="3" selected>3 jugadores</option>
+      <option value="4">4 jugadores</option>
+      <option value="5">5 jugadores</option>
+      <option value="6">6 jugadores</option>
+      <option value="7">7 jugadores</option>
+      <option value="8">8 jugadores</option>
+      <option value="9">9 jugadores</option>
+      <option value="10">10 jugadores</option>
+    </select>
+
+    <label>Nombre de los jugadores</label>
+    <div id="playerNamesContainer"></div>
+
+    <label for="selectCategory">Categoría</label>
+    <select id="selectCategory">
+      <option value="aleatorio">🎲 Aleatorio</option>
+      <option value="comida">🍕 Comida</option>
+      <option value="animales">🦁 Animales</option>
+      <option value="objetos">📦 Objetos</option>
+      <option value="sitios">🏛️ Sitios</option>
+      <option value="deportes">⚽ Deportes</option>
+      <option value="videojuegos">🎮 Videojuegos</option>
+      <option value="transportes">🚗 Transportes</option>
+      <option value="peliculas">🎬 Películas</option>
+      <option value="profesiones">👨‍⚕️ Profesiones</option>
+      <option value="paises">🌍 Países</option>
+    </select>
+
+    <label>
+      <input type="checkbox" id="timerEnabled" checked> Temporizador activado
+    </label>
+
+    <button onclick="startGame()">Empezar</button>
+    <button class="secondary" onclick="backToStart()">Volver</button>
+  </div>
+
+  <div id="screen-role" class="screen hidden">
+    <div class="role-badge-row">
+      <span class="badge" id="playerOrder"></span>
+    </div>
+    <h2 id="playerNameBig" class="player-name-big"></h2>
+
+    <div class="card-slider">
+      <div class="card-back">
+        <div class="card-back-content">
+          <div class="avatar-overlay">
+            <span id="backAvatar">😎</span>
+          </div>
+          <h3 id="roleTitle"></h3>
+          <div id="roleWord"></div>
+          <p class="role-tip" id="roleTip"></p>
+        </div>
+      </div>
+
+      <div class="card-front" id="cardFront">
+        <div class="avatar-overlay">
+          <span id="frontAvatar">😎</span>
+        </div>
+        <p class="slide-text">Desliza hacia arriba para ver tu rol</p>
+      </div>
+    </div>
+
+    <p id="instructionText" class="small"></p>
+
+    <button id="toggleRoleBtn" class="secondary" style="width:90%;max-width:340px;margin:10px auto 0;display:block;">
+      Mostrar rol
+    </button>
+
+    <button id="nextPlayerBtn" class="secondary hidden" onclick="nextPlayer()">
+      Jugador siguiente
+    </button>
+  </div>
+
+  <div id="screen-debate" class="screen hidden">
+    <h2>💬 Debate</h2>
+    <p id="starterInfo" class="center"></p>
+
+    <div class="timer-container" id="timerContainer" style="display: none;">
+      <p class="small">⏱️ Tiempo restante</p>
+      <div class="timer-display" id="timerDisplay">3:00</div>
+      <div class="timer-controls">
+        <button onclick="pauseTimer()">⏸️ Pausar</button>
+        <button onclick="resetTimer()">🔄 Reiniciar</button>
+        <button onclick="addTime()">➕ +1min</button>
+      </div>
+    </div>
+
+    <p class="center">
+      Cada jugador da una pista sobre la palabra.<br>
+      Comentad, defendedos y acusad al sospechoso.
+    </p>
+
+    <button onclick="startVoting()">Iniciar votación</button>
+  </div>
+
+  <div id="screen-voting" class="screen hidden">
+    <h2>🗳️ Votación</h2>
+    <p class="center" id="votingInstruction">Jugador **X**: ¿A quién vas a votar?</p>
+    
+    <div class="voting-grid" id="votingGrid"></div>
+
+    <p class="small" id="voteStatus">0 de 0 votos emitidos</p>
+
+    <button onclick="revealVotes()" id="revealVotesBtn" style="display: none;">
+      Ver resultados
+    </button>
+  </div>
+
+  <div id="screen-vote-results" class="screen hidden">
+    <h2>📊 Resultados</h2>
+    
+    <div class="result-card">
+      <div class="result-emoji" id="voteResultEmoji">🎯</div>
+      <h3 id="voteResultText"></h3>
+      <p id="voteResultDetail"></p>
+    </div>
+
+    <div id="voteBreakdown"></div>
+
+    <button onclick="showReveal()">Revelar palabra secreta</button>
+  </div>
+
+  <div id="screen-reveal" class="screen hidden">
+    <h2>🎭 Revelación</h2>
+
+    <p class="center">La palabra secreta era:</p>
+    <div id="finalWord"></div>
+
+    <p class="center">
+      El Impostorcillo era<br>
+      <span class="highlight" id="impostorPlayer"></span>
+    </p>
+
+    <div class="result-card" id="gameResult">
+      <div class="result-emoji" id="finalResultEmoji"></div>
+      <h3 id="finalResultText"></h3>
+    </div>
+
+    <button onclick="startAnotherRound()">Jugar otra ronda</button>
+    <button class="secondary" onclick="backToStart()">Volver al inicio</button>
+  </div>
+
+  <div id="screen-stats" class="screen hidden">
+    <h2>📊 Estadísticas</h2>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="totalGames">0</div>
+        <div class="stat-label">Partidas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="citizenWins">0</div>
+        <div class="stat-label">Victoria Ciudadanos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="impostorWins">0</div>
+        <div class="stat-label">Victoria Impostores</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="winRate">0%</div>
+        <div class="stat-label">% Victoria Ciudadanos</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 24px;">🏆 Top 5 Palabras Jugadas</h3>
+    <div id="topWords" style="margin: 16px 0;"></div>
+
+    <button class="danger" onclick="resetStats()">Resetear estadísticas</button>
+    <button class="secondary" onclick="backToStart()">Volver</button>
+  </div>
+
+</div>
+
+  </div>
+
+  <div id="tutorialOverlay" class="tutorial-overlay" style="display: none;">
+    <div class="tutorial-content">
+      <div class="tutorial-step active" data-step="1">
+        <div class="tutorial-emoji">🎭</div>
+        <h3>Bienvenido a El Impostorcillo</h3>
+        <p>Un juego social de deducción donde debes encontrar al impostor entre los jugadores.</p>
+        <button onclick="nextTutorialStep()">Siguiente</button>
+      </div>
+
+  <div class="tutorial-step" data-step="2">
+    <div class="tutorial-emoji">👥</div>
+    <h3>Los Roles</h3>
+    <p><strong>Ciudadanos:</strong> Conocen la palabra secreta y deben dar pistas.<br><br>
+    <strong>Impostorcillo:</strong> No conoce la palabra y debe fingir que sí.</p>
+    <button onclick="nextTutorialStep()">Siguiente</button>
+  </div>
+
+  <div class="tutorial-step" data-step="3">
+    <div class="tutorial-emoji">💬</div>
+    <h3>Cómo se Juega</h3>
+    <p>1️⃣ Cada jugador ve su rol en secreto<br>
+    2️⃣ Por turnos, dan pistas sobre la palabra<br>
+    3️⃣ Debaten quién es el impostor<br>
+    4️⃣ Votan al sospechoso</p>
+    <button onclick="nextTutorialStep()">Siguiente</button>
+  </div>
+
+  <div class="tutorial-step" data-step="4">
+    <div class="tutorial-emoji">🏆</div>
+    <h3>Victoria</h3>
+    <p><strong>Ciudadanos ganan:</strong> Si eliminan al impostorcillo<br><br>
+    <strong>Impostor gana:</strong> Si sobrevive la votación o adivina la palabra</p>
+    <button onclick="closeTutorial()">¡Empezar a jugar!</button>
+  </div>
+</div>
+  </div>
+
+<script src="script.js"></script>
+
+
+</body>
+</html>
